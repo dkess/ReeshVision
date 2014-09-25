@@ -138,20 +138,21 @@ if __name__ == "__main__":
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     s.settimeout(.5)
                     s.connect(("10.18.36.2", 1180))
+                    connected = True
                 except:
                     print "failed to connect"
                     last_t = cur_time + 1000
-
-            try:
-                write_bytes = bytearray()
-                write_bytes.append(byte_to_send)
-                s.send(write_bytes)
-                print byte_to_send
-                last_t = cur_time
-                connected = True
-            except IndexError:
-                print "something bad happened"
-                connected = False
+            else:
+                try:
+                    write_bytes = bytearray()
+                    write_bytes.append(byte_to_send)
+                    s.send(write_bytes)
+                    print byte_to_send
+                    last_t = cur_time
+                    connected = True
+                except socket.timeout:
+                    print "timed out"
+                    connected = False
 
         # Flip the image so the the screen is like a mirror
         wc_img = cv.flip(cv.resize(frame, (config["webcam_w"], config["webcam_h"])), 1)
